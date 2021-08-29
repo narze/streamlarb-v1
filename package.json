@@ -1,0 +1,26 @@
+{
+  "name": "vite-electron-svelte-ts",
+  "version": "0.1.0",
+  "description": "A Electron application create by Vite",
+  "main": "./dist/main/main.cjs.js",
+  "repository": "https://github.com/narze/vite-electron-svelte-ts.git",
+  "author": "Manassarn Manoonchai <manassarn@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "src/*"
+    ]
+  },
+  "scripts": {
+    "start": "node ./scripts/dev-runner",
+    "build": "node ./scripts/build"
+  },
+  "devDependencies": {
+    "chalk": "^4.1.1",
+    "electron": "^12.0.8",
+    "electron-builder": "^22.10.5",
+    "listr": "^0.14.3",
+    "vite": "^2.3.3"
+  }
+}
