@@ -1,13 +1,11 @@
-# vite-electron-svelte-ts
+# StreamLarb
 
-- ⚡ **Full stack uses Vite** to run Electron application, including main process.
-- 💡 The project is managed using **[yarn workspaces](https://classic.yarnpkg.com/en/docs/workspaces/)**, Therefore, it is recommended to use **Yarn** as a packages management tool.
+- Hackable overlay for streaming, built with ElectronJS + Svelte
 
 ## Usage
 
 ```bash
-git clone https://github.com/narze/vite-electron-svelte-ts.git
-cd vite-electron-svelte-ts
+git clone https://github.com/narze/streamlarb.git && cd streamlarb
 yarn
 yarn start
 ```
