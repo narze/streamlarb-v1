@@ -1,5 +1,5 @@
 {
-  "name": "temp",
+  "name": "renderer",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -17,5 +17,8 @@
     "tslib": "^2.2.0",
     "typescript": "^4.3.2",
     "vite": "^2.5.1"
+  },
+  "dependencies": {
+    "svelte-drag": "^1.3.1"
   }
 }
