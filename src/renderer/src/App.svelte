@@ -3,23 +3,23 @@
   import { onMount } from 'svelte';
 
   onMount(() => {
+    restoreWidgetsData()
+
     interact('.resizable')
       .resizable({
         edges: { top: true, left: true, bottom: true, right: true },
         listeners: {
           move: function (event) {
-            let { x, y } = event.target.dataset
+            let { x, y } = event.target.getBoundingClientRect()
 
-            x = (parseFloat(x) || 0) + event.deltaRect.left
-            y = (parseFloat(y) || 0) + event.deltaRect.top
+            x = parseFloat(x) + event.deltaRect.left
+            y = parseFloat(y) + event.deltaRect.top
 
             Object.assign(event.target.parentNode.style, {
               width: `${event.rect.width}px`,
               height: `${event.rect.height}px`,
               transform: `translate(${x}px, ${y}px)`
             })
-
-            Object.assign(event.target.dataset, { x, y })
 
             updateWidgetsData({ id: event.target.parentNode.id, w: event.rect.width, h: event.rect.height, x, y })
           },
@@ -33,21 +33,37 @@
           console.log(event.type, event.target, event.target.parentNode)
         },
         move (event) {
-          let { x, y } = event.target.dataset
+          let { x, y } = event.target.getBoundingClientRect()
 
-          x = (parseFloat(x) || 0) + event.dx
-          y = (parseFloat(y) || 0) + event.dy
+          x = parseFloat(x) + event.dx
+          y = parseFloat(y) + event.dy
 
           event.target.parentNode.style.transform =
             `translate(${x}px, ${y}px)`
-
-          Object.assign(event.target.dataset, { x, y })
 
           updateWidgetsData({ id: event.target.parentNode.id, w: event.rect.width, h: event.rect.height, x, y })
         },
       }
     })
   })
+
+  function restoreWidgetsData() {
+    let widgetsData = JSON.parse(localStorage.getItem('widgets') || "{}")
+
+    Object.entries(widgetsData).forEach(([id, data]) => {
+      if (Object.keys(data).length == 0) { return }
+
+      const widget = document.getElementById(id)
+
+      const { x, y, w, h } = data as any
+
+      Object.assign(widget.style, {
+        width: `${w}px`,
+        height: `${h}px`,
+        transform: `translate(${x}px, ${y}px)`
+      })
+    })
+  }
 
   function updateWidgetsData({id, x, y, w, h}) {
     const localStorageKey = "widgets"
