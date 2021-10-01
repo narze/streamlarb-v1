@@ -1,5 +1,5 @@
 import * as path from "path"
-import electron, { app, BrowserWindow, globalShortcut } from "electron"
+import electron, { app, BrowserWindow, globalShortcut, ipcRenderer } from "electron"
 
 const loadURL = import.meta.env.PROD
   ? `file://${path.resolve(__dirname, "../renderer/index.html")}`
@@ -15,6 +15,10 @@ function createWindow() {
     frame: false,
     alwaysOnTop: true,
     hasShadow: false,
+    webPreferences: {
+      nodeIntegration: true,
+      preload: path.join(__dirname, "../../preload.js"),
+    }
   })
 
   mainWindow.loadURL(loadURL)
@@ -38,7 +42,7 @@ function createWindow() {
 
 let window: electron.BrowserWindow
 let transparentBackground = true
-let debugMode = false
+let editMode = false
 
 app.whenReady().then(() => {
   window = createWindow()
@@ -55,13 +59,15 @@ app.whenReady().then(() => {
   })
 
   globalShortcut.register("Alt+CommandOrControl+V", () => {
-    debugMode = !debugMode
+    editMode = !editMode
 
-    window.setAlwaysOnTop(!debugMode)
-    window.setIgnoreMouseEvents(!debugMode)
+    window.setAlwaysOnTop(!editMode)
+    window.setIgnoreMouseEvents(!editMode)
+
+    window.webContents.send('debug-mode', editMode);
   })
 
-  globalShortcut.register("Alt+CommandOrControl+L", () => {
+  globalShortcut.register("Alt+CommandOrControl+Q", () => {
     const devTools = window.webContents.isDevToolsOpened()
 
     if (devTools) {
