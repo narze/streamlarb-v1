@@ -1,6 +1,7 @@
 <script lang="ts">
   import interact from "interactjs"
   import { onMount } from "svelte"
+  import "twind/shim"
 
   const { api } = window as any
 
@@ -133,15 +134,15 @@
   }
 </script>
 
-<main style="width: 100%; height: 100vh;">
+<main class="w-full h-screen">
   {#if editMode}
-    <h1 style="background-color: lime; width: 100px;position: fixed; ">
+    <h1 class="w-[100px] bg-green-400 fixed">
       Edit Mode ON
     </h1>
   {/if}
   <div
     id="widget-1"
-    style="width: 600px; height: 600px; position: fixed; overflow: hidden;"
+    class="w-[600px] h-[600px] fixed overflow-hidden"
   >
     <div
       class="draggable resizable"
@@ -154,7 +155,8 @@
     {/if}
     <iframe
       title="frame_1"
-      style="position: fixed; top: 0; z-index: 0"
+      class="zoom"
+      style="position: fixed; top: 0; z-index: 0;"
       src="https://streamkit.discord.com/overlay/chat/826099393694400574/848810430683938876?icon=true&online=true&logo=white&text_color=%23ffffff&text_size=14&text_outline_color=%23000000&text_outline_size=0&text_shadow_color=%23000000&text_shadow_size=0&bg_color=%231e2124&bg_opacity=0.95&bg_shadow_color=%23000000&bg_shadow_size=25&invite_code=9arm&limit_speaking=false&small_avatars=false&hide_names=false&fade_chat=0"
       width="580px"
       height="215px"
@@ -163,7 +165,7 @@
   </div>
   <div
     id="widget-2"
-    style="width: 600px; height: 600px; position: fixed; overflow: hidden;"
+    class="w-[600px] h-[600px] fixed overflow-hidden"
   >
     <div
       class="draggable resizable"
@@ -185,7 +187,7 @@
   </div>
   <div
     id="widget-3"
-    style="width: 600px; height: 600px; position: fixed; overflow: hidden;"
+    class="w-[600px] h-[600px] fixed overflow-hidden"
   >
     <div
       class="draggable resizable"
@@ -207,7 +209,7 @@
   </div>
   <div
     id="widget-4"
-    style="width: 600px; height: 600px; position: fixed; overflow: hidden;"
+    class="w-[600px] h-[600px] fixed overflow-hidden"
   >
     <div
       class="draggable resizable"
@@ -229,7 +231,7 @@
   </div>
   <div
     id="widget-5"
-    style="width: 600px; height: 600px; position: fixed; overflow: hidden;"
+    class="w-[600px] h-[600px] fixed overflow-hidden"
   >
     <div
       class="draggable resizable"
@@ -248,5 +250,12 @@
   :root {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
       Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  }
+
+  .zoom {
+    transform:scale(1.5);
+    transform-origin: 0 0;
+    -webkit-transform: scale(1.5);
+    -webkit-transform-origin: 0 0;
   }
 </style>
