@@ -1,20 +1,47 @@
 <script lang="ts">
-  export let idx: number
+  import { onMount } from 'svelte'
+
+  export let idx: string
   export let editMode: boolean
   export let url: string
   export let widgetHeight: number = 500
   export let widgetWidth: number = 500
   export let iframeWidth: number = 400
   export let iframeHeight: number = 400
+  export let x: number = 100
+  export let y: number = 100
+  export let onFrameChange: (width: number, height: number) => void
+  export let onPropsChange: (opts: any) => void
 
   let urlInput: HTMLInputElement
   let resizeMode: boolean = false
+  let frame
+
+  $: {
+    onPropsChange({ url })
+  }
+
+  onMount(() => {
+    const ro = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const cr = entry.contentRect
+        // console.log('Element:', entry.target)
+        // console.log(`Element size: ${cr.width}px x ${cr.height}px`)
+        // console.log(`Element padding: ${cr.top}px ; ${cr.left}px`)
+
+        onFrameChange(cr.width, cr.height)
+      }
+    })
+
+    ro.observe(frame)
+  })
 </script>
 
 <div
-  id="w-{idx}"
+  id={idx}
   class="fixed overflow-hidden"
-  style="width: {widgetWidth}px; height: {widgetHeight}px;">
+  style="width: {widgetWidth}px; height: {widgetHeight}px; transform: translate({x}px,
+  {y}px)">
   {#if resizeMode}
     <div
       class="draggable resizable"
@@ -35,7 +62,8 @@
     src={url}
     width="{iframeWidth}px"
     height="{iframeHeight}px"
-    frameborder="0" />
+    frameborder="0"
+    bind:this={frame} />
 
   {#if editMode}
     <div class="flex flex-col gap-2 m-2">
