@@ -17,6 +17,7 @@
       fw?: number
       fh?: number
       url: string
+      type?: string
     }
   > = {}
 
@@ -78,41 +79,23 @@
       },
     })
 
-    navigator.mediaDevices
-      .enumerateDevices()
-      .then((devices) =>
-        devices.forEach((device) =>
-          console.log(
-            `kind: ${device.kind}: ${device.label} id=${device.deviceId}`
-          )
-        )
-      )
-      .catch((err) => console.log(err))
-
-    navigator.getUserMedia(
-      {
-        audio: false,
-        video: {
-          mandatory: {
-            chromeMediaSourceId:
-              "fd937501fe2a627073aa210396fa3b691508fb72b7d8fb9233b5e2688fb6f4cf",
-          },
-        },
-      },
-      (localMediaStream) => {
-        var video = document.querySelector("video")
-        video.srcObject = localMediaStream
-        video.autoplay = true
-      },
-      (error) => console.log(error)
-    )
+    // navigator.mediaDevices
+    //   .enumerateDevices()
+    //   .then((devices) =>
+    //     devices.forEach((device) =>
+    //       console.log(
+    //         `kind: ${device.kind}: ${device.label} id=${device.deviceId}`
+    //       )
+    //     )
+    //   )
+    //   .catch((err) => console.log(err))
   })
 
   function restoreWidgetsData() {
     widgetsData = JSON.parse(localStorage.getItem("widgets") || "{}")
   }
 
-  function updateWidgetsData({ id, x, y, w, h, fw, fh, url }: any) {
+  function updateWidgetsData({ id, x, y, w, h, fw, fh, url, type }: any) {
     const localStorageKey = "widgets"
     const widgetsData = JSON.parse(
       localStorage.getItem(localStorageKey) || "{}"
@@ -140,6 +123,9 @@
     }
     if (url) {
       widgetsData[id].url = url
+    }
+    if (type) {
+      widgetsData[id].type = type
     }
 
     localStorage.setItem(localStorageKey, JSON.stringify(widgetsData))
@@ -177,13 +163,14 @@
       iframeWidth={data.fw}
       iframeHeight={data.fh}
       url={data.url}
+      type={data.type}
       onFrameChange={(width, height) => {
         console.log("onFrameChange", { width, height })
         updateWidgetsData({ id: idx, fw: width, fh: height })
       }}
       onPropsChange={(opts) => {
         if (opts.url) {
-          updateWidgetsData({id: idx, url: opts.url})
+          updateWidgetsData({ id: idx, url: opts.url })
         }
       }}
       {editMode}
@@ -197,10 +184,10 @@
       Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   }
 
-  .zoom {
+  /* .zoom {
     transform: scale(1.5);
     transform-origin: 0 0;
     -webkit-transform: scale(1.5);
     -webkit-transform-origin: 0 0;
-  }
+  } */
 </style>
