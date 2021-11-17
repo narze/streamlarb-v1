@@ -4,8 +4,8 @@
  */
 const options = {
   config: {
-    productName: "electron-vite-svelte",
-    appId: "com.example.yourapp",
+    productName: "Streamlarb",
+    appId: "com.monosor.streamlarb",
     directories: {
       output: "build",
     },
