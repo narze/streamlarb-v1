@@ -18,6 +18,7 @@
       fh?: number
       url: string
       type?: string
+      resizeMode?: boolean
     }
   > = {}
 
@@ -130,27 +131,49 @@
 
     localStorage.setItem(localStorageKey, JSON.stringify(widgetsData))
   }
+
+  function addNewWidget() {
+    const id = Math.random().toString(36).substring(2)
+
+    widgetsData = {
+      ...widgetsData,
+      ...{
+        [id]: {
+          x: 100,
+          y: 100,
+          w: 600,
+          h: 400,
+          fw: 400,
+          fh: 300,
+          resizeMode: true,
+          url: "https://google.com",
+          type: "url",
+        },
+      },
+    }
+  }
+
+  function onRemoveWidget(id) {
+    delete widgetsData[id]
+
+    localStorage.setItem("widgets", JSON.stringify(widgetsData))
+
+    // Trigger Svelte reactive statements
+    widgetsData = widgetsData
+  }
 </script>
 
 <main class="w-full h-screen">
   {#if editMode}
-    <h1 class="w-[100px] bg-green-400 fixed">Edit Mode ON</h1>
+    <div class="fixed top-10 left-10 w-full h-full text-lg">
+      <h1 class="w-[100px] bg-green-400 ">Edit Mode ON</h1>
+      <p class="mt-4">
+        <button on:click={addNewWidget} class="bg-red-300 px-2 py-1 rounded"
+          >Add new widget</button
+        >
+      </p>
+    </div>
   {/if}
-  <!--
-  <div id="widget-5" class="w-[600px] h-[600px] fixed overflow-hidden">
-    <div
-      class="draggable resizable"
-      style="width: 100%; height: 100%; background-color: rgba(100, 0, 0, 0);
-      z-index: 100; position: absolute;"
-    />
-    {#if editMode}
-      <div
-        style="background-color: rgba(0, 100, 0, 1); width: 100%; height: 100%;
-        z-index: -1; position: absolute;"
-      />
-    {/if}
-    <video id="video" height="100%" width="100%" autoplay />
-  </div> -->
 
   {#each Object.entries(widgetsData) as [idx, data] (idx)}
     <!-- <p class="bg-white">{id} -> {JSON.stringify(data)}</p> -->
@@ -173,6 +196,8 @@
           updateWidgetsData({ id: idx, url: opts.url })
         }
       }}
+      resizeMode={data.resizeMode}
+      {onRemoveWidget}
       {editMode}
     />
   {/each}

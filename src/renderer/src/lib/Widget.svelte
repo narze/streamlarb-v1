@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte"
+  import { onDestroy, onMount } from "svelte"
 
   export let idx: string
   export let editMode: boolean
@@ -11,20 +11,23 @@
   export let iframeHeight: number = 400
   export let x: number = 100
   export let y: number = 100
+  export let resizeMode: boolean = false
   export let onFrameChange: (width: number, height: number) => void
   export let onPropsChange: (opts: any) => void
+  export let onRemoveWidget: (id: string) => void
+
+  const videoMode: boolean = type === "webcam"
 
   let urlInput: HTMLInputElement
-  let resizeMode: boolean = false
-  let videoMode: boolean = type === "webcam"
   let frame
+  let ro: ResizeObserver
 
   $: {
     onPropsChange({ url })
   }
 
   onMount(() => {
-    const ro = new ResizeObserver((entries) => {
+    ro = new ResizeObserver((entries) => {
       for (let entry of entries) {
         const cr = entry.contentRect
         // console.log('Element:', entry.target)
@@ -36,6 +39,10 @@
     })
 
     ro.observe(frame)
+  })
+
+  onDestroy(() => {
+    ro.disconnect()
   })
 
   $: if (videoMode) {
@@ -108,9 +115,9 @@
 
         <button
           class="bg-red-400 px-2 py-1 rounded"
-          on:click={() => (videoMode = !videoMode)}
+          on:click={() => onRemoveWidget(idx)}
         >
-          Toggle Video
+          Remove Widget
         </button>
       </div>
 
