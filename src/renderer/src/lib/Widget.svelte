@@ -5,6 +5,7 @@
   export let editMode: boolean
   export let url: string
   export let type: string
+  export let deviceId: string
   export let widgetHeight: number = 500
   export let widgetWidth: number = 500
   export let iframeWidth: number = 400
@@ -51,15 +52,13 @@
         audio: false,
         video: {
           mandatory: {
-            chromeMediaSourceId:
-              "fd937501fe2a627073aa210396fa3b691508fb72b7d8fb9233b5e2688fb6f4cf",
+            chromeMediaSourceId: deviceId,
           },
         },
       },
       (localMediaStream) => {
-        var video = document.querySelector("video")
-        video.srcObject = localMediaStream
-        video.autoplay = true
+        frame.srcObject = localMediaStream
+        frame.autoplay = true
       },
       (error) => console.log(error)
     )
@@ -88,7 +87,7 @@
   {/if}
 
   {#if videoMode}
-    <video id="video" height="100%" width="100%" autoplay bind:this={frame} />
+    <video height="100%" width="100%" autoplay bind:this={frame} />
   {:else}
     <iframe
       title="frame_1"
@@ -103,43 +102,42 @@
   {/if}
 
   {#if editMode}
-    <div class="flex flex-col gap-2 m-2">
-      <div>
-        <button
-          class="bg-red-400 px-2 py-1 rounded"
-          disabled={resizeMode}
-          on:click={() => (resizeMode = !resizeMode)}
-        >
-          Resize & Move Widget
-        </button>
+    <div class="z-20 absolute top-2 left-2">
+      <button
+        class="bg-red-400 px-2 py-1 rounded fixed"
+        on:click={() => onRemoveWidget(idx)}
+      >
+        X
+      </button>
 
-        <button
-          class="bg-red-400 px-2 py-1 rounded"
-          on:click={() => onRemoveWidget(idx)}
-        >
-          Remove Widget
-        </button>
-      </div>
-
-      {#if resizeMode}
-        <div class="z-20 absolute bottom-2 right-2">
+      <div class="flex flex-col gap-2 mx-2 my-12">
+        <div>
           <button
             class="bg-red-400 px-2 py-1 rounded"
+            disabled={resizeMode}
             on:click={() => (resizeMode = !resizeMode)}
           >
-            Done
+            Resize & Move Widget
+          </button>
+          {#if resizeMode}
+            <button
+              class="z-20 ml-2 bg-red-400 px-2 py-1 rounded"
+              on:click={() => (resizeMode = !resizeMode)}
+            >
+              Done
+            </button>
+          {/if}
+        </div>
+
+        <div>
+          <input type="text" bind:this={urlInput} value={url} />
+          <button
+            class="bg-red-400 px-2 py-1 rounded"
+            on:click={() => (url = urlInput.value)}
+          >
+            Apply URL
           </button>
         </div>
-      {/if}
-
-      <div>
-        <input type="text" bind:this={urlInput} value={url} />
-        <button
-          class="bg-red-400 px-2 py-1 rounded"
-          on:click={() => (url = urlInput.value)}
-        >
-          Apply URL
-        </button>
       </div>
     </div>
   {/if}

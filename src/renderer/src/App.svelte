@@ -17,15 +17,27 @@
       fw?: number
       fh?: number
       url: string
+      deviceId?: string
       type?: string
       resizeMode?: boolean
     }
   > = {}
+  let videoInputDevices: MediaDeviceInfo[] = []
+  let selecteVideoDevice: MediaDeviceInfo
 
   api.recieve("debug-mode", (args: [boolean]) => {
     editMode = args[0]
-    console.log({ editMode })
   })
+
+  navigator.mediaDevices
+    .enumerateDevices()
+    .then((devices) => {
+      videoInputDevices = devices.filter(
+        (device) => device.kind === "videoinput"
+      )
+      console.log({ videoInputDevices })
+    })
+    .catch((err) => console.log(err))
 
   onMount(() => {
     restoreWidgetsData()
@@ -79,17 +91,6 @@
         },
       },
     })
-
-    // navigator.mediaDevices
-    //   .enumerateDevices()
-    //   .then((devices) =>
-    //     devices.forEach((device) =>
-    //       console.log(
-    //         `kind: ${device.kind}: ${device.label} id=${device.deviceId}`
-    //       )
-    //     )
-    //   )
-    //   .catch((err) => console.log(err))
   })
 
   function restoreWidgetsData() {
@@ -132,7 +133,7 @@
     localStorage.setItem(localStorageKey, JSON.stringify(widgetsData))
   }
 
-  function addNewWidget() {
+  function addNewWidget(overrides = {}) {
     const id = Math.random().toString(36).substring(2)
 
     widgetsData = {
@@ -148,9 +149,19 @@
           resizeMode: true,
           url: "https://google.com",
           type: "url",
+          ...overrides,
         },
       },
     }
+
+    localStorage.setItem("widgets", JSON.stringify(widgetsData))
+  }
+
+  function addNewWebcamWidget() {
+    addNewWidget({
+      type: "webcam",
+      deviceId: selecteVideoDevice.deviceId,
+    })
   }
 
   function onRemoveWidget(id) {
@@ -166,10 +177,24 @@
 <main class="w-full h-screen">
   {#if editMode}
     <div class="fixed top-10 left-10 w-full h-full text-lg">
-      <h1 class="w-[100px] bg-green-400 ">Edit Mode ON</h1>
+      <h1 class="w-[200px] bg-green-400 p-4 text-3xl">Edit Mode</h1>
       <p class="mt-4">
         <button on:click={addNewWidget} class="bg-red-300 px-2 py-1 rounded"
           >Add new widget</button
+        >
+      </p>
+      <p class="mt-4">
+        <select class="px-2 py-2 rounded" bind:value={selecteVideoDevice}>
+          {#each videoInputDevices as videoInputDevice}
+            <option value={videoInputDevice}>
+              {videoInputDevice.label}
+            </option>
+          {/each}
+        </select>
+
+        <button
+          on:click={addNewWebcamWidget}
+          class="bg-red-300 px-2 py-1 rounded">Add new webcam</button
         >
       </p>
     </div>
@@ -187,8 +212,8 @@
       iframeHeight={data.fh}
       url={data.url}
       type={data.type}
+      deviceId={data.deviceId}
       onFrameChange={(width, height) => {
-        console.log("onFrameChange", { width, height })
         updateWidgetsData({ id: idx, fw: width, fh: height })
       }}
       onPropsChange={(opts) => {
