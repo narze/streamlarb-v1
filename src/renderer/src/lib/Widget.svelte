@@ -138,6 +138,10 @@
             Apply URL
           </button>
         </div>
+        <div>
+          Width: <input type="number" class="w-16" bind:value={iframeWidth} />
+          Height: <input type="number" class="w-16" bind:value={iframeHeight} />
+        </div>
       </div>
     </div>
   {/if}
